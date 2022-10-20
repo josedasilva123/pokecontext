@@ -1,22 +1,12 @@
 
 import React, { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { request } from "../../services/api";
-import { iPokemon } from "../types";
-import { iPokeListProviderProps, iPokemonResult } from "./types";
-
-interface iPokeListContext{
-    pokeListLoading: boolean;
-    pokeList: iPokemonResult[];
-    currentPokemon: iPokemon | null;
-    getCurrentPokemon: (
-        pokemonName: string,
-        setLoading: Dispatch<SetStateAction<boolean>>
-    ) => void;
-}
+import { iContextDefaultProps, iPokemon } from "../types";
+import { iPokeListContext, iPokemonResult } from "./types";
 
 export const PokeListContext = createContext({} as iPokeListContext);
 
-export const PokeListProvider = ({children}: iPokeListProviderProps) => {
+export const PokeListProvider = ({children}: iContextDefaultProps) => {
     const [pokeListLoading, setPokeListLoading] = useState(false);
     const [pokeList, setPokeList] = useState([] as iPokemonResult[]);
     const [currentPokemon, setCurrentPokemon] = useState<iPokemon | null>(null);

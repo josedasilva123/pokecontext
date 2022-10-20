@@ -1,3 +1,4 @@
+import React from "react";
 
 interface iStat{
     name: string;
@@ -21,4 +22,8 @@ export interface iPokemon{
     id: number;
     stats: iPokemonStat;
     sprites: iPokemonSprites;
+}
+
+export interface iContextDefaultProps{
+    children: React.ReactNode;
 }
