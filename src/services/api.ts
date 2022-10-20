@@ -13,6 +13,6 @@ interface iRequest<Data>{
 }
 
 export const request = async (req: iRequest<any>) => {
-    const response = await axios.request(req)
+    const response = await axios.request(req);
     return response;
 }
