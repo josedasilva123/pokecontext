@@ -36,8 +36,11 @@ export const PokeTeamProvider = ({ children }: iContextDefaultProps) => {
     setPokeTeam(newTeam);
   }
 
-  const pokeTeamDropAction = () => {
+  const pokeTeamDropAction = (
+
     
+  ) => {
+
   }
 
   return (
