@@ -7,9 +7,12 @@ import { iPokeListContext, iPokemonResult } from "./types";
 export const PokeListContext = createContext({} as iPokeListContext);
 
 export const PokeListProvider = ({children}: iContextDefaultProps) => {
-    const [pokeListLoading, setPokeListLoading] = useState(false);
+    const [pokeListLoading, setPokeListLoading] = useState(false);    
     const [pokeList, setPokeList] = useState([] as iPokemonResult[]);
     const [currentPokemon, setCurrentPokemon] = useState<iPokemon | null>(null);
+    const [search, setSearch] = useState("");
+
+    const searchPokeList = pokeList.filter(pokemon => pokemon.name.includes(search));
 
     useEffect(() => {
         (async () => {
@@ -45,7 +48,7 @@ export const PokeListProvider = ({children}: iContextDefaultProps) => {
     }    
 
     return (
-        <PokeListContext.Provider value={{ pokeListLoading, pokeList, currentPokemon, getCurrentPokemon}}>
+        <PokeListContext.Provider value={{ pokeListLoading, pokeList, currentPokemon, getCurrentPokemon, searchPokeList, search, setSearch}}>
             {children}
         </PokeListContext.Provider>
     )

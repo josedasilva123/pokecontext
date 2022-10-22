@@ -13,4 +13,7 @@ export interface iPokeListContext{
         pokemonName: string,
         setLoading: Dispatch<SetStateAction<boolean>>
     ) => void;
+    searchPokeList: iPokemonResult[];
+    search: string;
+    setSearch: Dispatch<SetStateAction<string>>
 }
