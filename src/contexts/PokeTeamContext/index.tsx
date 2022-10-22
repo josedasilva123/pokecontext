@@ -1,8 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { PokeListContext } from "../PokeListContext";
 import { iContextDefaultProps, iPokemon } from "../types";
+import produce from "immer";
+import { iPokeTeamContext, iDraggingPokemon } from "./types";
 
-export const PokeTeamContext = createContext({});
+export const PokeTeamContext = createContext({} as iPokeTeamContext);
 
 export const PokeTeamProvider = ({ children }: iContextDefaultProps) => {
   const storagedPokeTeam = localStorage.getItem("@POKETEAM");
@@ -11,39 +13,66 @@ export const PokeTeamProvider = ({ children }: iContextDefaultProps) => {
     : ([] as iPokemon[]);
 
   const [pokeTeam, setPokeTeam] = useState<iPokemon[]>(currentTeam);
+  const [draggingPokemon, setDraggingPokemon] =
+    useState<iDraggingPokemon | null>(null);
+  const [hoveringPokemon, setHoveringPokemon] =
+    useState<iDraggingPokemon | null>(null);
 
   const { currentPokemon } = useContext(PokeListContext);
 
   useEffect(() => {
-    localStorage.setItem('@POKETEAM', JSON.stringify(pokeTeam));
-  }, [pokeTeam])
+    localStorage.setItem("@POKETEAM", JSON.stringify(pokeTeam));
+  }, [pokeTeam]);
 
   const addPokemonToPokeTeam = () => {
-    if(pokeTeam.length !== 6){
-        if(!pokeTeam.some(pokemon => pokemon.name === currentPokemon?.name)){
-            const newTeam = [...pokeTeam, currentPokemon] as iPokemon[];
-            setPokeTeam(newTeam);
-        } else {
-            alert(`${currentPokemon?.name} já está no time`);
-        }   
+    if (pokeTeam.length !== 6) {
+      if (!pokeTeam.some((pokemon) => pokemon.name === currentPokemon?.name)) {
+        const newTeam = [...pokeTeam, currentPokemon] as iPokemon[];
+        setPokeTeam(newTeam);
+      } else {
+        alert(`${currentPokemon?.name} já está no time`);
+      }
     } else {
-        alert('Seu time está cheio.');
-    }   
-  }
+      alert("Seu time está cheio.");
+    }
+  };
 
   const removePokemonFromPokeTeam = (removingPokemon: iPokemon) => {
-    const newTeam = pokeTeam.filter(pokemon => pokemon.name !== removingPokemon.name);
+    const newTeam = pokeTeam.filter(
+      (pokemon) => pokemon.name !== removingPokemon.name
+    );
     setPokeTeam(newTeam);
-  }
+  };
 
-  const pokeTeamDropAction = (
+  const pokeTeamDropAction = () => {
+    const currentPokemon = { ...draggingPokemon } as iDraggingPokemon;
 
-    
-  ) => {
+    const newTeam = produce(pokeTeam, (draft: iDraggingPokemon[]) => {
+      if (draggingPokemon) {
+        draft.splice(draggingPokemon.index, 1);
+        hoveringPokemon
+          ? draft.splice(hoveringPokemon.index, 0, currentPokemon)
+          : draft.push(currentPokemon);
+      }
+    });
 
-  }
+    setPokeTeam(newTeam);
+  };
 
   return (
-    <PokeTeamContext.Provider value={{ pokeTeam, addPokemonToPokeTeam, removePokemonFromPokeTeam }}>{children}</PokeTeamContext.Provider>
+    <PokeTeamContext.Provider
+      value={{
+        pokeTeam,
+        addPokemonToPokeTeam,
+        removePokemonFromPokeTeam,
+        pokeTeamDropAction,
+        draggingPokemon,
+        setDraggingPokemon,
+        hoveringPokemon,
+        setHoveringPokemon,
+      }}
+    >
+      {children}
+    </PokeTeamContext.Provider>
   );
 };
