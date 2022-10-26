@@ -1,14 +1,16 @@
 import React, { useContext, useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import PokemonTeam from './components/PokemonTeam';
 import { PokeListContext } from './contexts/PokeListContext';
-import { pokemonBattleActions } from './contexts/PokeBattleContext/reducers';
+import { PokeTeamContext } from './contexts/PokeTeamContext';
 
 function App() {
   const [loading, setLoading] = useState(false);
   const { pokeList, currentPokemon, getCurrentPokemon } = useContext(PokeListContext);
+  const { addPokemonToPokeTeam } = useContext(PokeTeamContext);
   return (
     <div className="App">
+      <PokemonTeam />
       {loading ? (
         <h1>Carregando...</h1>
       ) : (
@@ -17,6 +19,7 @@ function App() {
             <div>
               <h2>{currentPokemon.name}</h2>
               <img src={currentPokemon.sprites.front_default} alt={currentPokemon.name} />
+              <button onClick={addPokemonToPokeTeam}>Adicionar</button>
             </div>
           )}
         </>
