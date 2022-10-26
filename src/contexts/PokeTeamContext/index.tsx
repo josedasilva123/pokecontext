@@ -1,4 +1,11 @@
-import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { PokeListContext } from "../PokeListContext";
 import { iContextDefaultProps, iPokemon } from "../types";
 import produce from "immer";
@@ -49,9 +56,13 @@ export const PokeTeamProvider = ({ children }: iContextDefaultProps) => {
 
     const newTeam = produce(pokeTeam, (draft: iDraggingPokemon[]) => {
       if (draggingPokemon) {
-        draft.splice(draggingPokemon.index, 1);
+        draft.splice(currentPokemon.index, 1);
         hoveringPokemon
-          ? draft.splice(hoveringPokemon.index, 0, currentPokemon)
+          ? draft.splice(
+              hoveringPokemon.index,
+              0,
+              pokeTeam[currentPokemon.index] as iDraggingPokemon
+            )
           : draft.push(currentPokemon);
       }
     });
