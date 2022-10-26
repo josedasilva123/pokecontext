@@ -1,24 +1,31 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { PokeListContext } from './contexts/PokeListContext';
+import { pokemonBattleActions } from './contexts/PokeBattleContext/reducers';
 
 function App() {
+  const [loading, setLoading] = useState(false);
+  const { pokeList, currentPokemon, getCurrentPokemon } = useContext(PokeListContext);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {loading ? (
+        <h1>Carregando...</h1>
+      ) : (
+        <>
+          {currentPokemon && (
+            <div>
+              <h2>{currentPokemon.name}</h2>
+              <img src={currentPokemon.sprites.front_default} alt={currentPokemon.name} />
+            </div>
+          )}
+        </>
+      )}
+      {pokeList.map(pokemon => (
+        <li onClick={() => getCurrentPokemon(pokemon.name, setLoading)}>
+          <h3>{pokemon.name}</h3>
+        </li>
+      ))}
     </div>
   );
 }
