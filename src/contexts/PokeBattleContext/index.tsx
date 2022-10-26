@@ -1,11 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useReducer, useState } from "react";
 import { PokeListContext } from "../PokeListContext";
 import { PokeTeamContext } from "../PokeTeamContext";
 import { iContextDefaultProps, iPokemon } from "../types";
