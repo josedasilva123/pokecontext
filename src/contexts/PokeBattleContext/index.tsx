@@ -14,6 +14,7 @@ import {
   playerInitialState,
   enemyInitialState,
   pokemonBattleActions,
+  iPokemonBattle,
 } from "./reducers";
 import { getPokemonBattleInfo } from "./utils/getPokemonBattleInfo";
 
@@ -29,12 +30,14 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
   const [battleChat, setBattleChat] = useState([] as iBattleMessage[]);
   const [player, dispatchPlayer] = useReducer(
     PokemonBattleReducer,
-    playerInitialState
+    playerInitialState 
   );
+  const [playerHP, setPlayerHP] = useState<number | null>(0);
   const [enemy, dispatchEnemy] = useReducer(
     PokemonBattleReducer,
     enemyInitialState
   );
+  const [enemyHP, setEnemyHP] = useState<number | null>(0);
 
   const { pokeTeam } = useContext(PokeTeamContext);
   const { currentPokemon: enemyPokemon } = useContext(PokeListContext);
@@ -43,13 +46,12 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
     const playerPokemon = pokeTeam[0];
     const playerPokemonInfo = getPokemonBattleInfo(playerPokemon);
     const enemyPokemonInfo = getPokemonBattleInfo(enemyPokemon as iPokemon);
-
+    
     dispatchPlayer({
-      type: pokemonBattleActions.setState,
+      type: pokemonBattleActions.setPokemon,
       payload: {
-        hp: playerPokemonInfo.stats[0].value,
-        damage: false,
         pokemon: {
+          type: "player",
           name: playerPokemon.name,
           types: playerPokemon.types,
           stats: playerPokemonInfo.stats,
@@ -57,13 +59,13 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
         },
       },
     });
+    setPlayerHP(playerPokemonInfo.stats[0].value);
 
     dispatchEnemy({
-      type: pokemonBattleActions.setState,
+      type: pokemonBattleActions.setPokemon,
       payload: {
-        hp: enemyPokemonInfo.stats[0].value,
-        damage: false,
         pokemon: {
+          type: "enemy",
           name: enemyPokemon?.name,
           types: enemyPokemon?.types,
           stats: enemyPokemonInfo.stats,
@@ -71,7 +73,34 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
         },
       },
     });
+    setEnemyHP(playerPokemonInfo.stats[0].value);
   }, [battle]);
+
+  useEffect(() => {
+    const battleDeclareWinner = (loser: iPokemonBattle, message: string) => {
+      setBattleChat([
+        ...battleChat,
+        {
+          text: `${loser.pokemon.name?.toUpperCase()} foi derrotado...`,
+        },
+        {
+          text: message,
+          callback: () => {
+            setBattle(false);
+            dispatchPlayer({
+              type: pokemonBattleActions.setState,
+              payload: playerInitialState,
+            });
+            dispatchEnemy({
+              type: pokemonBattleActions.setState,
+              payload: enemyInitialState,
+            });
+          },
+        }
+      ]);
+    };
+
+  }, [playerHP, enemyHP]);
 
   const battleRun = () => {
     setBattleChat([
