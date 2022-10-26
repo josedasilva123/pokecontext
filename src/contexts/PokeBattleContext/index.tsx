@@ -106,9 +106,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
   }, []);
 
   return (
-    <PokeBattleContext.Provider
-      value={{ player, enemy, playerHP, enemyHP, battle, setBattle, battleRun }}
-    >
+    <PokeBattleContext.Provider value={{ player, enemy, playerHP, enemyHP, battle, setBattle, battleRun }}>
       {children}
     </PokeBattleContext.Provider>
   );
