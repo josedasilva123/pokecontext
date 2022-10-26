@@ -49,13 +49,11 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
       dispatchPlayer({
         type: pokemonBattleActions.setPokemon,
         payload: {
-          pokemon: {
             type: "player",
             name: playerPokemon.name,
             types: playerPokemon.types,
             stats: playerPokemonInfo.stats,
             moves: playerPokemonInfo.moves,
-          },
         },
       });
       setPlayerHP(playerPokemonInfo.stats[0].value);
@@ -63,16 +61,14 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
       dispatchEnemy({
         type: pokemonBattleActions.setPokemon,
         payload: {
-          pokemon: {
             type: "enemy",
             name: enemyPokemon?.name,
             types: enemyPokemon?.types,
             stats: enemyPokemonInfo.stats,
             moves: enemyPokemonInfo.moves,
-          },
         },
       });
-      setEnemyHP(playerPokemonInfo.stats[0].value);
+      setEnemyHP(enemyPokemonInfo.stats[0].value);
     }
   }, [battle]);
 
