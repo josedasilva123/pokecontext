@@ -1,4 +1,6 @@
 import { Reducer } from "react";
+import { pokemonBattleActions } from "./actions";
+import { iPokemonBattle, iPokemonBattleAction } from "./types";
 
 export const playerInitialState = {
     damage: false,
@@ -22,30 +24,6 @@ export const enemyInitialState = {
     }
 } 
 
-export enum pokemonBattleActions {
-    setState = 'pokemon/setState',
-    setPokemon = 'pokemon/setPokemon',
-    setHP = 'pokemon/setHP',
-    setInDamage = 'pokemon/setInDamage',
-} 
-
-interface iBattlingPokemon{
-    type: string;
-    name: null | string;
-    types: null | any[],
-    stats: null | any[],
-    moves: null | any[],
-}
-
-export interface iPokemonBattle{
-    damage: boolean;
-    pokemon: iBattlingPokemon;
-}
-
-interface iPokemonBattleAction{
-    type: pokemonBattleActions;
-    payload: any;
-}
 
 export const PokemonBattleReducer: Reducer<iPokemonBattle, iPokemonBattleAction> = (state, action) => {
     switch(action.type){

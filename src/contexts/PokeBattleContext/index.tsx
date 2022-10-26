@@ -13,9 +13,9 @@ import {
   PokemonBattleReducer,
   playerInitialState,
   enemyInitialState,
-  pokemonBattleActions,
-  iPokemonBattle,
 } from "./reducers";
+import { pokemonBattleActions } from "./reducers/actions";
+import { iPokemonBattle } from "./reducers/types";
 import { iPokeBattleContext, iBattleMessage } from "./types";
 import { getPokemonBattleInfo } from "./utils/getPokemonBattleInfo";
 

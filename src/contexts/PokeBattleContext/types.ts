@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { iPokemonBattle } from "./reducers";
+import { iPokemonBattle } from "./reducers/types";
 
 export interface iPokeBattleContext {
   player: iPokemonBattle;
