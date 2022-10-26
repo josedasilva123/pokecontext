@@ -1,4 +1,5 @@
-import React, { useContext } from "react";
+import React from "react";
+import { useContext } from "use-context-selector";
 import { PokeTeamContext } from "../../../contexts/PokeTeamContext";
 import { iPokemon } from "../../../contexts/types";
 import { useDragElement } from "../../../hooks/useDragElement";
