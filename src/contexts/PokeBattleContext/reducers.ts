@@ -24,6 +24,7 @@ export const enemyInitialState = {
 
 export enum pokemonBattleActions {
     setState = 'pokemon/setState',
+    setPokemon = 'pokemon/setPokemon',
     setHP = 'pokemon/setHP',
     setInDamage = 'pokemon/setInDamage',
 } 
@@ -51,6 +52,8 @@ export const PokemonBattleReducer = (state: iPokemonBattle, action: iPokemonBatt
     switch(action.type){
         case pokemonBattleActions.setState:
             return action.payload;
+        case pokemonBattleActions.setPokemon:
+            return { ...state, pokemon: action.payload}     
         case pokemonBattleActions.setHP:
             return { ...state, hp: action.payload };
         case pokemonBattleActions.setInDamage:

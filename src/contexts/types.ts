@@ -4,7 +4,7 @@ interface iStat{
     name: string;
 }
 
-interface iPokemonStat{
+export interface iPokemonStat{
     base_stat: number;
     effort: number;
     stat: iStat;
@@ -20,8 +20,9 @@ interface iPokemonSprites{
 export interface iPokemon{
     name: string;
     id: number;
-    stats: iPokemonStat;
+    stats: iPokemonStat[];
     sprites: iPokemonSprites;
+    types: any[];
 }
 
 export interface iContextDefaultProps{
