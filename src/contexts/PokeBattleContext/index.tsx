@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useReducer,
@@ -16,22 +17,20 @@ import {
   pokemonBattleActions,
   iPokemonBattle,
 } from "./reducers";
+import { iPokeBattleContext, iBattleMessage } from "./types";
 import { getPokemonBattleInfo } from "./utils/getPokemonBattleInfo";
 
-export const PokeBattleContext = createContext({});
-
-interface iBattleMessage {
-  text: string;
-  callback?: () => void;
-}
+export const PokeBattleContext = createContext({} as iPokeBattleContext);
 
 export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
   const [battle, setBattle] = useState(false);
+
   const [battleChat, setBattleChat] = useState([] as iBattleMessage[]);
   const [player, dispatchPlayer] = useReducer(
     PokemonBattleReducer,
     playerInitialState
   );
+  
   const [playerHP, setPlayerHP] = useState<number | null>(0);
   const [enemy, dispatchEnemy] = useReducer(
     PokemonBattleReducer,
@@ -103,7 +102,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
     };
   }, [playerHP, enemyHP]);
 
-  const battleRun = () => {
+  const battleRun = useCallback(() => {
     setBattleChat([
       {
         text: "Você fugiu em segurança...",
@@ -120,10 +119,12 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
         },
       },
     ]);
-  };
+  }, []);
 
   return (
-    <PokeBattleContext.Provider value={{}}>
+    <PokeBattleContext.Provider
+      value={{ player, enemy, playerHP, enemyHP, setBattle, battleRun }}
+    >
       {children}
     </PokeBattleContext.Provider>
   );
