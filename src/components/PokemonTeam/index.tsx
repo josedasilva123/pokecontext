@@ -17,7 +17,7 @@ const PokemonTeam = () => {
     {pokeTeam.length > 0 ? (
       <ul {...dropZoneEvents}>
       {pokeTeam.map((pokemon, index) => (
-        <PokemonTeamCard pokemon={pokemon} index={index} />
+        <PokemonTeamCard key={pokemon.name} pokemon={pokemon} index={index} />
       ))}
       </ul>
     ) : (
