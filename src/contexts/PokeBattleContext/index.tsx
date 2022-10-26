@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   useCallback,
-  useContext,
   useEffect,
   useReducer,
   useState,
@@ -123,7 +122,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
 
   return (
     <PokeBattleContext.Provider
-      value={{ player, enemy, playerHP, enemyHP, setBattle, battleRun }}
+      value={{ player, enemy, playerHP, enemyHP, battle, setBattle, battleRun }}
     >
       {children}
     </PokeBattleContext.Provider>

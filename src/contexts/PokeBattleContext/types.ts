@@ -6,6 +6,7 @@ export interface iPokeBattleContext {
   enemy: iPokemonBattle;
   playerHP: number | null;
   enemyHP: number | null;
+  battle: boolean;
   setBattle: Dispatch<SetStateAction<boolean>>;
   battleRun: () => void;
 }

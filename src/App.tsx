@@ -10,7 +10,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const { pokeList, currentPokemon, getCurrentPokemon } = useContext(PokeListContext);
   const { addPokemonToPokeTeam } = useContext(PokeTeamContext);
-  const { setBattle } = useContext(PokeBattleContext);
+  const { player, playerHP, enemy, enemyHP, battle, setBattle } = useContext(PokeBattleContext);
   return (
     <div className="App">
       <PokemonTeam />
@@ -18,6 +18,18 @@ function App() {
         <h1>Carregando...</h1>
       ) : (
         <>
+          {battle && (
+            <div>
+              <div>
+                <h1>{player.pokemon.name}</h1>
+                <span>{playerHP}</span>
+              </div>
+              <div>
+                <h1>{enemy.pokemon.name}</h1>
+                <span>{enemyHP}</span>
+              </div>
+            </div>
+          )}
           {currentPokemon && (
             <div>
               <h2>{currentPokemon.name}</h2>
@@ -29,7 +41,7 @@ function App() {
         </>
       )}
       {pokeList.map(pokemon => (
-        <li onClick={() => getCurrentPokemon(pokemon.name, setLoading)}>
+        <li key={pokemon.name} onClick={() => getCurrentPokemon(pokemon.name, setLoading)}>
           <h3>{pokemon.name}</h3>
         </li>
       ))}
