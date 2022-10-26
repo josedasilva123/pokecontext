@@ -1,4 +1,5 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
+import { useContext, useContextSelector } from 'use-context-selector';
 import './App.css';
 import PokemonTeam from './components/PokemonTeam';
 import { PokeBattleContext } from './contexts/PokeBattleContext';

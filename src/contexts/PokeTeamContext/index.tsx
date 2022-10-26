@@ -1,9 +1,8 @@
 import {
-  createContext,
-  useContext,
   useEffect,
   useState,
 } from "react";
+import { createContext, useContextSelector } from "use-context-selector"
 import { PokeListContext } from "../PokeListContext";
 import { iContextDefaultProps, iPokemon } from "../types";
 import produce from "immer";
@@ -23,7 +22,7 @@ export const PokeTeamProvider = ({ children }: iContextDefaultProps) => {
   const [hoveringPokemon, setHoveringPokemon] =
     useState<iDraggingPokemon | null>(null);
 
-  const { currentPokemon } = useContext(PokeListContext);
+  const currentPokemon = useContextSelector(PokeListContext, state => state.currentPokemon);
 
   useEffect(() => {
     localStorage.setItem("@POKETEAM", JSON.stringify(pokeTeam));

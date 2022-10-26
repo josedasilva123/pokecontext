@@ -1,5 +1,6 @@
 
-import React, { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { createContext } from "use-context-selector"
 import { request } from "../../services/api";
 import { iContextDefaultProps, iPokemon } from "../types";
 import { iPokeListContext, iPokemonResult } from "./types";

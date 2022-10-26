@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
-  createContext,
   useCallback,
   useContext,
   useEffect,
   useReducer,
   useState,
 } from "react";
+import { createContext, useContextSelector } from "use-context-selector"
 import { PokeListContext } from "../PokeListContext";
 import { PokeTeamContext } from "../PokeTeamContext";
 import { iContextDefaultProps, iPokemon } from "../types";
@@ -38,8 +38,8 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
   );
   const [enemyHP, setEnemyHP] = useState<number | null>(0);
 
-  const { pokeTeam } = useContext(PokeTeamContext);
-  const { currentPokemon: enemyPokemon } = useContext(PokeListContext);
+  const pokeTeam= useContextSelector(PokeTeamContext, state => state.pokeTeam);
+  const enemyPokemon = useContextSelector(PokeListContext, state => state.currentPokemon);
 
   useEffect(() => {
     if (battle) {
