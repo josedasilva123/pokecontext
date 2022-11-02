@@ -25,8 +25,6 @@ import { getPokemonBattleInfo } from "./utils/getPokemonBattleInfo";
 
 export const PokeBattleContext = createContext({} as iPokeBattleContext);
 
-
-
 export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
   const [battle, setBattle] = useState(false);
 
