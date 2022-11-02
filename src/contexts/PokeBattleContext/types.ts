@@ -43,3 +43,8 @@ export interface iBattlingPokemonInfoAndControls{
   setHP: Dispatch<SetStateAction<number | null>>;
   dispatch: Dispatch<iPokemonBattleAction>;
 }
+
+export interface iNext{
+  userType: "player" | "enemy";
+  move: iPokemonMove;
+}
