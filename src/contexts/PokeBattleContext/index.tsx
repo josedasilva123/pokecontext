@@ -231,8 +231,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
     }
 
     function doHeal() {
-      const healedHP =
-        (user.hp as number) + userStats[0].value * (move.power / 100);
+      const healedHP = (user.hp as number) + userStats[0].value * (move.power / 100);
       const maxHP = userStats[0].value;
 
       if (healedHP > maxHP) {
