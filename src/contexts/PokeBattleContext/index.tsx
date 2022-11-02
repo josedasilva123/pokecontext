@@ -86,6 +86,12 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
         },
       ]);
     };
+    if(playerHP as number <= 0){
+      battleDeclareWinner(player, "Você foi derrotado...");
+    } else {
+      battleDeclareWinner(enemy, "Parabéns você venceu!")
+    }
+    
   }, [playerHP, enemyHP]);
 
   const resetBattle = useCallback(() => {
