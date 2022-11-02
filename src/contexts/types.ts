@@ -10,6 +10,10 @@ export interface iPokemonStat{
     stat: iStat;
 }
 
+export interface iPokemonBattleStat{
+    value: number;
+}
+
 interface iPokemonSprites{
     front_default: string;
     back_default: string;
