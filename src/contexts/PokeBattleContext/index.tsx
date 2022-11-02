@@ -16,7 +16,7 @@ import {
   enemyInitialState,
 } from "./reducers";
 import { pokemonBattleActions, setInDamage, setPokemon, setState } from "./reducers/actions";
-import { iBattlingPokemon, iPokemonBattle } from "./reducers/types";
+import { iPokemonBattle } from "./reducers/types";
 import { iPokeBattleContext, iBattleMessage, iPokemonMove, iDoPokemonMoveParams, iBattlingPokemonInfoAndControls } from "./types";
 import { calculateDamage } from "./utils/battleRules/calculateDamage";
 import { flinch } from "./utils/battleRules/flinch";
