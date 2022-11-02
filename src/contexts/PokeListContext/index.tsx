@@ -21,7 +21,7 @@ export const PokeListProvider = ({children}: iContextDefaultProps) => {
                 setPokeListLoading(true);
                 const response = await request({
                     method: "get",
-                    url: "pokemon?limit=151&offset=0",
+                    url: `pokemon?limit=$151&offset=0`,
                 })   
 
                 setPokeList(response.data.results);
@@ -49,7 +49,7 @@ export const PokeListProvider = ({children}: iContextDefaultProps) => {
     }    
 
     return (
-        <PokeListContext.Provider value={{ pokeListLoading, pokeList, currentPokemon, getCurrentPokemon, searchPokeList, search, setSearch}}>
+        <PokeListContext.Provider value={{ pokeListLoading, pokeList, currentPokemon, getCurrentPokemon, searchPokeList, search, setSearch }}>
             {children}
         </PokeListContext.Provider>
     )

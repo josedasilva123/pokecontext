@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useContext } from 'use-context-selector';
 import './App.css';
 import PokemonTeam from './components/PokemonTeam';
@@ -11,6 +11,9 @@ function App() {
   const { pokeList, currentPokemon, getCurrentPokemon } = useContext(PokeListContext);
   const { addPokemonToPokeTeam } = useContext(PokeTeamContext);
   const { player, playerHP, enemy, enemyHP, battle, setBattle } = useContext(PokeBattleContext);
+
+
+
   return (
     <div className="App">
       <PokemonTeam />

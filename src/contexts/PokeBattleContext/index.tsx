@@ -3,7 +3,7 @@ import { useCallback, useEffect, useReducer, useState } from "react";
 import { createContext, useContextSelector } from "use-context-selector";
 import { PokeListContext } from "../PokeListContext";
 import { PokeTeamContext } from "../PokeTeamContext";
-import { iContextDefaultProps, iPokemon } from "../types";
+import { iContextDefaultProps, iPokemon, iType } from "../types";
 import {
   PokemonBattleReducer,
   playerInitialState,
@@ -62,7 +62,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
         setPokemon({
           type: "enemy",
           name: enemyPokemon?.name as string,
-          types: enemyPokemon?.types as any[],
+          types: enemyPokemon?.types as iType[],
           stats: enemyPokemonInfo.stats,
           moves: enemyPokemonInfo.moves,
         })
@@ -106,7 +106,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
   }, []);
 
   return (
-    <PokeBattleContext.Provider value={{ player, enemy, playerHP, enemyHP, battle, setBattle, battleRun }}>
+    <PokeBattleContext.Provider value={{ player, enemy, playerHP, enemyHP, battle, setBattle, battleChat, battleRun }}>
       {children}
     </PokeBattleContext.Provider>
   );

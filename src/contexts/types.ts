@@ -17,12 +17,18 @@ interface iPokemonSprites{
     back_female?: string;
 }
 
+export interface iType{
+    type: {
+        name: string;
+    }
+}
+
 export interface iPokemon{
     name: string;
     id: number;
     stats: iPokemonStat[];
     sprites: iPokemonSprites;
-    types: any[];
+    types: iType[];
 }
 
 export interface iContextDefaultProps{
