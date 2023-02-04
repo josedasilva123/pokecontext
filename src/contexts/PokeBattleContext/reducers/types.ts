@@ -1,5 +1,5 @@
 import { iPokemonBattleStat, iType } from "../../types";
-import { pokemonBattleActions } from "./actions";
+import { pokemonBattleActions, statsMultiplierActions } from "./actions";
 
 export interface iBattlingPokemon {
   type: string;
@@ -18,3 +18,9 @@ export interface iPokemonBattleAction {
   type: pokemonBattleActions;
   payload: any;
 }
+
+export interface iStatusMultiplierAction {
+  type: statsMultiplierActions,
+  payload: number,
+}
+
