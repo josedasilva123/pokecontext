@@ -83,7 +83,8 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
    useEffect(() => {
       if (playerHP !== null && enemyHP !== null) {
          const battleDeclareWinner = (loser: iPokemonBattle, loserType: "player" | "enemy", message: string) => {
-            const filteredBattleChat = battleChat.filter(message => message.owner !== loserType);
+            const filteredBattleChat = battleChat.filter((message) => message.owner !== loserType);
+
             setBattleChat([
                ...filteredBattleChat,
                {
@@ -100,13 +101,13 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
          if ((playerHP as number) <= 0) {
             battleDeclareWinner(player, "player", "Você foi derrotado...");
          } else if ((enemyHP as number) <= 0) {
-            battleDeclareWinner(enemy, "enemy" , "Parabéns você venceu!");
+            battleDeclareWinner(enemy, "enemy", "Parabéns você venceu!");
          }
       }
    }, [playerHP, enemyHP]);
 
    useEffect(() => {
-      if (next) {
+      if (next && playerHP as number > 0 && enemyHP as number > 0) {
          doNextPokemonMove(next.move, next.userType);
       }
    }, [next]);
@@ -248,6 +249,19 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
          });
       }
 
+      function executeNextMove() {
+         if (nextMove) {
+            if (flinch(move)) {
+               addToNewBattleChat("O movimento ACOVARDOU o alvo");
+            } else {
+               setNext({
+                  move: nextMove,
+                  userType,
+               });
+            }
+         }
+      }
+
       function executeDamageMove(multiplier: number, effectiveMessage?: string) {
          const dice = Math.random() * 100;
 
@@ -255,10 +269,11 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
 
          if (imune) {
             addToNewBattleChat(getMoveText(user.pokemon, move));
-            addToNewBattleChat("Ops! O alvo é imune a este movimento...");
+            addToNewBattleChat("Ops! O alvo é imune a este movimento...", () => executeNextMove());
          } else if (Math.round(dice) < move.accuracy || !move.accuracy) {
             addToNewBattleChat(getMoveText(user.pokemon, move), () => {
                doDamage(multiplier);
+               executeNextMove();
             });
 
             if (effectiveMessage) {
@@ -266,14 +281,15 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
             }
          } else {
             addToNewBattleChat(getMoveText(user.pokemon, move));
-            addToNewBattleChat(`${user.pokemon.name?.toUpperCase()} errou o movimento...`);
+            addToNewBattleChat(`${user.pokemon.name?.toUpperCase()} errou o movimento...`, () => executeNextMove());
          }
       }
 
       function executeHealMove() {
          addToNewBattleChat(getMoveText(user.pokemon, move), () => {
             doHeal();
-         })
+            executeNextMove();
+         });
       }
 
       switch (move.category) {
@@ -285,17 +301,6 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
             const effectiveness = getMultiplier(move.type, target.pokemon.types as iType[]);
             executeDamageMove(effectiveness.modifier, effectiveness.message);
             break;
-      }
-
-      if (nextMove) {
-         if (flinch(move)) {
-            addToNewBattleChat("O movimento ACOVARDOU o alvo");
-         } else {
-            setNext({
-               move: nextMove,
-               userType,
-            });
-         }
       }
 
       setBattleChat([...battleChat, ...newBattleChat]);
