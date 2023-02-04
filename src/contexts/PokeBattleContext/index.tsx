@@ -34,11 +34,11 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
 
    const [player, dispatchPlayer] = useReducer(PokemonBattleReducer, playerInitialState);
    const [playerHP, setPlayerHP] = useState<number | null>(null);
-   const [playerStats, dispatchPlayerStats] = useReducer(PokemonStatsMultiplier, statsMultiplierInitialState);
+   const [playerStatsMultiplier, dispatchPlayerStatsMultiplier] = useReducer(PokemonStatsMultiplier, statsMultiplierInitialState);
 
    const [enemy, dispatchEnemy] = useReducer(PokemonBattleReducer, enemyInitialState);
    const [enemyHP, setEnemyHP] = useState<number | null>(null);
-   const [enemyStats, dispatchEnemyStats] = useReducer(PokemonStatsMultiplier, statsMultiplierInitialState);
+   const [enemyStatsMultiplier, dispatchEnemyStatsMultiplier] = useReducer(PokemonStatsMultiplier, statsMultiplierInitialState);
 
    const [next, setNext] = useState<iNext | null>(null);
 
@@ -140,7 +140,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
                pokemon: player.pokemon,
                hp: playerHP,
                setHP: setPlayerHP,
-               statsMultiplier: playerStats,
+               statsMultiplier: playerStatsMultiplier,
                dispatch: dispatchPlayer,
                type: "player",
             };
@@ -149,7 +149,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
                pokemon: enemy.pokemon,
                hp: enemyHP,
                setHP: setEnemyHP,
-               statsMultiplier: enemyStats,
+               statsMultiplier: enemyStatsMultiplier,
                dispatch: dispatchEnemy,
                type: "enemy",
             };
@@ -160,7 +160,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
                pokemon: enemy.pokemon,
                hp: enemyHP,
                setHP: setEnemyHP,
-               statsMultiplier: enemyStats,
+               statsMultiplier: enemyStatsMultiplier,
                dispatch: dispatchEnemy,
                type: "enemy",
             };
@@ -169,7 +169,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
                pokemon: player.pokemon,
                hp: playerHP,
                setHP: setPlayerHP,
-               statsMultiplier: playerStats,
+               statsMultiplier: playerStatsMultiplier,
                dispatch: dispatchPlayer,
                type: "player",
             };
@@ -334,10 +334,10 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
       const enemyMove = allMoves.find((move) => move.name === enemyRandomMove) as iPokemonMove;
 
       const playerStats = player.pokemon.stats as iPokemonBattleStat[];
-      const playerSpeed = playerStats[5].value;
+      const playerSpeed = getStatsWithMultiplier(playerStats[5], 5, playerStatsMultiplier);
 
       const enemyStats = enemy.pokemon.stats as iPokemonBattleStat[];
-      const enemySpeed = enemyStats[5].value;
+      const enemySpeed = getStatsWithMultiplier(enemyStats[5], 5, enemyStatsMultiplier);
 
       if (playerSpeed > enemySpeed) {
          doPokemonMove({
