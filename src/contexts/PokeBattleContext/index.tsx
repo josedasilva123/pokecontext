@@ -5,13 +5,20 @@ import { allMoves, pokemonMoves } from "../../data/pokemonMoves";
 import { PokeListContext } from "../PokeListContext";
 import { PokeTeamContext } from "../PokeTeamContext";
 import { iContextDefaultProps, iPokemon, iPokemonBattleStat, iType } from "../types";
-import { PokemonBattleReducer, playerInitialState, enemyInitialState } from "./reducers";
+import {
+   PokemonBattleReducer,
+   playerInitialState,
+   enemyInitialState,
+   statsMultiplierInitialState,
+   PokemonStatsMultiplier,
+} from "./reducers";
 import { setInDamage, setPokemon, setState } from "./reducers/actions";
 import { iPokemonBattle } from "./reducers/types";
 import { iPokeBattleContext, iBattleMessage, iPokemonMove, iDoPokemonMoveParams, iBattlingPokemonInfoAndControls, iNext } from "./types";
 import { calculateDamage } from "./utils/battleRules/calculateDamage";
 import { flinch } from "./utils/battleRules/flinch";
 import { getMultiplier } from "./utils/battleRules/getMultiplier";
+import { getStatsWithMultiplier } from "./utils/battleRules/getStatsMultiplier";
 import { isImune } from "./utils/battleRules/isImune";
 import { isPhysicalOrSpecial } from "./utils/battleRules/isPhysicalOrSpecial";
 import { getMoveText } from "./utils/getMoveText";
@@ -24,11 +31,15 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
    const [isStarting, setIsStarting] = useState(false);
 
    const [battleChat, setBattleChat] = useState([] as iBattleMessage[]);
-   const [player, dispatchPlayer] = useReducer(PokemonBattleReducer, playerInitialState);
 
+   const [player, dispatchPlayer] = useReducer(PokemonBattleReducer, playerInitialState);
    const [playerHP, setPlayerHP] = useState<number | null>(null);
+   const [playerStats, dispatchPlayerStats] = useReducer(PokemonStatsMultiplier, statsMultiplierInitialState);
+
    const [enemy, dispatchEnemy] = useReducer(PokemonBattleReducer, enemyInitialState);
    const [enemyHP, setEnemyHP] = useState<number | null>(null);
+   const [enemyStats, dispatchEnemyStats] = useReducer(PokemonStatsMultiplier, statsMultiplierInitialState);
+
    const [next, setNext] = useState<iNext | null>(null);
 
    const pokeTeam = useContextSelector(PokeTeamContext, (state) => state.pokeTeam);
@@ -71,9 +82,10 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
 
    useEffect(() => {
       if (playerHP !== null && enemyHP !== null) {
-         const battleDeclareWinner = (loser: iPokemonBattle, message: string) => {
+         const battleDeclareWinner = (loser: iPokemonBattle, loserType: "player" | "enemy", message: string) => {
+            const filteredBattleChat = battleChat.filter(message => message.owner !== loserType);
             setBattleChat([
-               ...battleChat,
+               ...filteredBattleChat,
                {
                   text: `${loser.pokemon.name?.toUpperCase()} foi derrotado...`,
                },
@@ -86,9 +98,9 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
             ]);
          };
          if ((playerHP as number) <= 0) {
-            battleDeclareWinner(player, "Você foi derrotado...");
+            battleDeclareWinner(player, "player", "Você foi derrotado...");
          } else if ((enemyHP as number) <= 0) {
-            battleDeclareWinner(enemy, "Parabéns você venceu!");
+            battleDeclareWinner(enemy, "enemy" , "Parabéns você venceu!");
          }
       }
    }, [playerHP, enemyHP]);
@@ -101,6 +113,8 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
 
    const resetBattle = useCallback(() => {
       setBattle(false);
+      setPlayerHP(null);
+      setEnemyHP(null);
       dispatchPlayer(setState(playerInitialState));
       dispatchEnemy(setState(enemyInitialState));
    }, []);
@@ -126,14 +140,18 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
                pokemon: player.pokemon,
                hp: playerHP,
                setHP: setPlayerHP,
+               statsMultiplier: playerStats,
                dispatch: dispatchPlayer,
+               type: "player",
             };
 
             target = {
                pokemon: enemy.pokemon,
                hp: enemyHP,
                setHP: setEnemyHP,
+               statsMultiplier: enemyStats,
                dispatch: dispatchEnemy,
+               type: "enemy",
             };
             break;
 
@@ -142,14 +160,18 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
                pokemon: enemy.pokemon,
                hp: enemyHP,
                setHP: setEnemyHP,
+               statsMultiplier: enemyStats,
                dispatch: dispatchEnemy,
+               type: "enemy",
             };
 
             target = {
                pokemon: player.pokemon,
                hp: playerHP,
                setHP: setPlayerHP,
+               statsMultiplier: playerStats,
                dispatch: dispatchPlayer,
+               type: "player",
             };
             break;
       }
@@ -158,7 +180,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
    };
 
    const doPokemonMove = ({ move, userPokemon, targetPokemon, userType, nextMove }: iDoPokemonMoveParams) => {
-      let newBattleChat = [];
+      let newBattleChat = [] as iBattleMessage[];
 
       const { user, target } = getUserAndTarget(userType);
       const { attack, defense } = isPhysicalOrSpecial(move.category);
@@ -167,7 +189,10 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
       const targetStats = targetPokemon.stats as iPokemonBattleStat[];
 
       function doDamage(multiplier: number) {
-         const damage = calculateDamage(move.power, multiplier, userStats[attack].value, targetStats[defense].value);
+         const userAttack = getStatsWithMultiplier(userStats[attack], attack, user.statsMultiplier);
+         const targetDefense = getStatsWithMultiplier(targetStats[defense], defense, target.statsMultiplier);
+
+         const damage = calculateDamage(move.power, multiplier, userAttack, targetDefense);
 
          const newHP = (target.hp as number) - damage;
 
@@ -200,6 +225,8 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
                target.dispatch(setInDamage(false));
             }, 600);
          }
+
+         return { targetNewHP: newHP };
       }
 
       function doHeal() {
@@ -213,51 +240,40 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
          }
       }
 
+      function addToNewBattleChat(text: string, callback?: () => void) {
+         newBattleChat.push({
+            text,
+            callback,
+            owner: user.type,
+         });
+      }
+
       function executeDamageMove(multiplier: number, effectiveMessage?: string) {
          const dice = Math.random() * 100;
 
          const imune = isImune(move.type, target.pokemon.types as iType[]);
 
          if (imune) {
-            newBattleChat.push({
-               text: getMoveText(user.pokemon, move),
-            });
-            newBattleChat.push({
-               text: "Ops! O alvo é imune a este movimento...",
-            });
-         }
-
-         if (Math.round(dice) < move.accuracy || !move.accuracy) {
-            newBattleChat.push({
-               text: getMoveText(user.pokemon, move),
-               callback: () => {
-                  doDamage(multiplier);
-               },
+            addToNewBattleChat(getMoveText(user.pokemon, move));
+            addToNewBattleChat("Ops! O alvo é imune a este movimento...");
+         } else if (Math.round(dice) < move.accuracy || !move.accuracy) {
+            addToNewBattleChat(getMoveText(user.pokemon, move), () => {
+               doDamage(multiplier);
             });
 
             if (effectiveMessage) {
-               newBattleChat.push({
-                  text: effectiveMessage,
-               });
+               addToNewBattleChat(effectiveMessage);
             }
          } else {
-            newBattleChat.push({
-               text: getMoveText(user.pokemon, move),
-            });
-
-            newBattleChat.push({
-               text: `${user.pokemon.name?.toUpperCase()} errou o movimento...`,
-            });
+            addToNewBattleChat(getMoveText(user.pokemon, move));
+            addToNewBattleChat(`${user.pokemon.name?.toUpperCase()} errou o movimento...`);
          }
       }
 
       function executeHealMove() {
-         newBattleChat.push({
-            text: getMoveText(user.pokemon, move),
-            callback: () => {
-               doHeal();
-            },
-         });
+         addToNewBattleChat(getMoveText(user.pokemon, move), () => {
+            doHeal();
+         })
       }
 
       switch (move.category) {
@@ -266,21 +282,19 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
             break;
 
          default:
-            const effectiveness = getMultiplier(move.type, user.pokemon.types as iType[]);
+            const effectiveness = getMultiplier(move.type, target.pokemon.types as iType[]);
             executeDamageMove(effectiveness.modifier, effectiveness.message);
             break;
       }
 
       if (nextMove) {
          if (flinch(move)) {
-            newBattleChat.push({
-               text: "O movimento ACOVARDOU o alvo",
-            });
-         } else {            
+            addToNewBattleChat("O movimento ACOVARDOU o alvo");
+         } else {
             setNext({
                move: nextMove,
                userType,
-            });            
+            });
          }
       }
 
@@ -290,26 +304,23 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
    const doNextPokemonMove = (move: iPokemonMove, lastUserType: "player" | "enemy") => {
       switch (lastUserType) {
          case "player":
-            if ((playerHP as number) > 0) {
-               doPokemonMove({
-                  move,
-                  userPokemon: enemy.pokemon,
-                  targetPokemon: player.pokemon,
-                  userType: "enemy",
-               });
-            }
+            doPokemonMove({
+               move,
+               userPokemon: enemy.pokemon,
+               targetPokemon: player.pokemon,
+               userType: "enemy",
+            });
+
             break;
 
          case "enemy":
-            if ((enemyHP as number) > 0) {
-               doPokemonMove({
-                  move,
-                  userPokemon: player.pokemon,
-                  targetPokemon: enemy.pokemon,
-                  userType: "player",
-               });
-               break;
-            }
+            doPokemonMove({
+               move,
+               userPokemon: player.pokemon,
+               targetPokemon: enemy.pokemon,
+               userType: "player",
+            });
+            break;
       }
    };
 
@@ -341,7 +352,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
             move: enemyMove,
             userPokemon: enemy.pokemon,
             targetPokemon: player.pokemon,
-            userType: "player",
+            userType: "enemy",
             nextMove: move,
          });
       }
