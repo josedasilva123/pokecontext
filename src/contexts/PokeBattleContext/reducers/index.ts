@@ -1,7 +1,6 @@
 import { Reducer } from "react";
-import { iStatsMultiplier } from "../types";
 import { pokemonBattleActions, statsMultiplierActions } from "./actions";
-import { iPokemonBattle, iPokemonBattleAction, iStatusMultiplierAction } from "./types";
+import { iPokemonBattle, iPokemonBattleAction, iStatsMultiplier, iStatusMultiplierAction } from "./types";
 
 export const playerInitialState = {
    damage: false,

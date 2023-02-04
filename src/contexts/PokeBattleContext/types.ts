@@ -1,9 +1,10 @@
 import { Dispatch, SetStateAction } from "react";
-import { iBattlingPokemon, iPokemonBattle, iPokemonBattleAction } from "./reducers/types";
+import { iBattlingPokemon, iPokemonBattle, iPokemonBattleAction, iStatsMultiplier } from "./reducers/types";
 
 export interface iBattleMessage {
    text: string;
    callback?: () => void;
+   owner?: string;
 }
 
 export interface iPokeBattleContext {
@@ -44,7 +45,9 @@ export interface iBattlingPokemonInfoAndControls {
    pokemon: iBattlingPokemon;
    hp: number | null;
    setHP: Dispatch<SetStateAction<number | null>>;
+   statsMultiplier: iStatsMultiplier,
    dispatch: Dispatch<iPokemonBattleAction>;
+   type: "player" | "enemy";
 }
 
 export interface iNext {
@@ -52,12 +55,6 @@ export interface iNext {
    move: iPokemonMove;
 }
 
-export interface iStatsMultiplier {
-   attack: number;
-   defense: number;
-   specialAttack: number;
-   specialDefense: number;
-   speed: number;
-}
+
 
 
