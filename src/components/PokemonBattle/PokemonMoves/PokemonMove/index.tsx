@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useContextSelector } from "use-context-selector";
+import { PokeBattleContext } from "../../../../contexts/PokeBattleContext";
+import { iPokemonMove } from "../../../../contexts/PokeBattleContext/types";
 import { allMoves } from "../../../../data/pokemonMoves";
 
 interface iPokemonMoveProps {
@@ -6,11 +9,14 @@ interface iPokemonMoveProps {
 }
 
 const PokemonMove = ({ move }: iPokemonMoveProps) => {
-   const moveData = allMoves.find((moveData) => moveData.name === move);
+   const tryBattleMove = useContextSelector(PokeBattleContext, context => context.tryBattleMove);
+
+   const moveData = allMoves.find((moveData) => moveData.name === move) as iPokemonMove;
    const [pp, setPp] = useState(moveData?.pp as number);
 
    const doBattleMove = () => {
       if (pp > 0) {
+         tryBattleMove(moveData);
          setPp(pp - 1);
       } 
    };

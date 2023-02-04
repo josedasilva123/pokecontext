@@ -1,10 +1,10 @@
-import { iPokemonBattleStat } from "../../types";
+import { iPokemonBattleStat, iType } from "../../types";
 import { pokemonBattleActions } from "./actions";
 
 export interface iBattlingPokemon {
   type: string;
   name: null | string;
-  types: null | any[];
+  types: null | iType[];
   stats: null | iPokemonBattleStat[];
   moves: null | string[];
 }
