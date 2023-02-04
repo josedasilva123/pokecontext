@@ -26,7 +26,6 @@ export function getStatsMultiplier(statsIndex: number, statsMultiplier: iStatsMu
         const statsDebuff = 2 / ( multiplier + 2 )
         return stats.value * statsDebuff;
     } else {
-        console.log(stats.value);
         return stats.value;
     }
     
