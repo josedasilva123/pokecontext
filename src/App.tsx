@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useContext } from 'use-context-selector';
-import './App.css';
+import PokemonMoves from './components/PokemonBattle/PokemonMoves';
 import PokemonTeam from './components/PokemonTeam';
 import { PokeBattleContext } from './contexts/PokeBattleContext';
 import { PokeListContext } from './contexts/PokeListContext';
@@ -31,6 +31,7 @@ function App() {
                 <h1>{enemy.pokemon.name}</h1>
                 <span>{enemyHP}</span>
               </div>
+              <PokemonMoves />
             </div>
           )}
           {currentPokemon && (
