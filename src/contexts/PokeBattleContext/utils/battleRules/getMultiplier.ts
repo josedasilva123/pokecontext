@@ -2,17 +2,25 @@ import { types } from "../../../../data/pokemonTypes";
 import { iType } from "../../../types";
 
 export function getMultiplier(moveType: string, pokemonTypes: iType[]) {
-  pokemonTypes.forEach((type) => {
-    const currentMoveType = types.find((t) => {
-      return t.type === type.type.name;
-    });
+   let modifier = 0;
 
-    if (currentMoveType?.halfDamage.includes(moveType)) {
-      return .5;
-    } else if (currentMoveType?.doubleDamage.includes(moveType)) {
-      return 2;
-    } else {
-      return 1;
-    }
-  });
+   pokemonTypes.forEach((type) => {
+      const currentMoveType = types.find((t) => {
+         return t.type === type.type.name;
+      });
+
+      if (currentMoveType?.halfDamage.includes(moveType)) {
+         modifier = modifier + 1;
+      } else if (currentMoveType?.doubleDamage.includes(moveType)) {
+         modifier = modifier - 1;
+      }
+   });
+
+   if (modifier > 0) {
+      return { modifier: 2, message: "Foi super efetivo!" };
+   } else if (modifier < 0) {
+      return { modifier: .5, message: "Não é muito efeitivo!" };
+   } else {
+      return { modifier: 1 };
+   }
 }
