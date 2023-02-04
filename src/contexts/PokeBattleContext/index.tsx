@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { createContext, useContextSelector } from "use-context-selector";
+import { allMoves, pokemonMoves } from "../../data/pokemonMoves";
 import { PokeListContext } from "../PokeListContext";
 import { PokeTeamContext } from "../PokeTeamContext";
 import {
@@ -34,6 +35,7 @@ export const PokeBattleContext = createContext({} as iPokeBattleContext);
 
 export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
   const [battle, setBattle] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
 
   const [battleChat, setBattleChat] = useState([] as iBattleMessage[]);
   const [player, dispatchPlayer] = useReducer(
@@ -60,6 +62,11 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
 
   useEffect(() => {
     if (battle) {
+      setIsStarting(true);
+      setTimeout(() => {
+        setIsStarting(false);
+      }, 800);
+
       const playerPokemon = pokeTeam[0];
       const playerPokemonInfo = getPokemonBattleInfo(playerPokemon);
       const enemyPokemonInfo = getPokemonBattleInfo(enemyPokemon as iPokemon);
@@ -311,9 +318,48 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
     }
   };
 
+  const tryBattleMove = (move: iPokemonMove) => {
+    const dice = Math.round(Math.random()) * 3;
+
+    const enemyMoves = pokemonMoves.find(pokemon => pokemon.name === enemy.pokemon.name)?.mainMoves as string[];
+
+    const enemyRandomMove = enemyMoves[dice];
+    
+    const enemyMove = allMoves.find(move => move.name === enemyRandomMove) as iPokemonMove;
+
+    const playerStats = player.pokemon.stats as iPokemonBattleStat[];
+    const playerSpeed = playerStats[5].value;
+
+    const enemyStats = enemy.pokemon.stats as iPokemonBattleStat[];
+    const enemySpeed = enemyStats[5].value;
+
+    if(playerSpeed > enemySpeed){
+      doPokemonMove(
+        {
+          move,
+          userPokemon: player.pokemon,
+          targetPokemon: enemy.pokemon,
+          userType: "player",
+          nextMove: enemyMove,
+        }
+      )
+    } else {
+      doPokemonMove(
+        {
+          move: enemyMove,
+          userPokemon: enemy.pokemon,
+          targetPokemon: player.pokemon,
+          userType: "player",
+          nextMove: move,
+        }
+      )  
+    }
+  }
+
   return (
     <PokeBattleContext.Provider
       value={{
+        isStarting,
         player,
         enemy,
         playerHP,

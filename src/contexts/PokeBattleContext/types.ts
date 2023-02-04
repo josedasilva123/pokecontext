@@ -15,6 +15,7 @@ export interface iPokeBattleContext {
   setBattle: Dispatch<SetStateAction<boolean>>;
   battleRun: () => void;
   battleChat: iBattleMessage[];
+  isStarting: boolean;
 }
 
 export interface iPokemonMove{
