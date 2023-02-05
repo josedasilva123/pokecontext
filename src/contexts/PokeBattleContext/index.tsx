@@ -358,6 +358,56 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
          }
       }
 
+      function executeDebuffMove() {
+         function debuffStat(multiplierValue: number, statName: string, callback: (newMultiplier: number) => void) {
+            const newMultiplier = multiplierValue - move.power;
+            if (newMultiplier >= -6 && multiplierValue !== -6) {
+               addToNewBattleChat(getMoveText(user.pokemon, move), () => {
+                  callback(newMultiplier);
+               });
+               addToNewBattleChat(`${statName.toUpperCase()} de ${target.pokemon.name?.toUpperCase()} ${move.power === 2 ? "diminuiu drasticamente!" : "diminuiu."}`, () => {
+                  executeNextMove();
+               });
+            } else {
+               addToNewBattleChat(`${statName.toUpperCase()} de ${target.pokemon.name?.toUpperCase()} já está no mínimo.`, () => {
+                  executeNextMove();
+               });
+            }
+         }
+
+         switch (move.stat) {
+            case "attack":
+               debuffStat(target.statsMultiplier.attack, move.stat, (newMultiplier) => {
+                  target.dispatchStatsMultiplier(setAttack(newMultiplier < -6 ? -6 : newMultiplier));
+               });
+               break;
+
+            case "defense":
+               debuffStat(target.statsMultiplier.defense, move.stat, (newMultiplier) => {
+                  target.dispatchStatsMultiplier(setDefense(newMultiplier < -6 ? -6 : newMultiplier));
+               });
+               break;
+
+            case "special-attack":
+               debuffStat(target.statsMultiplier.specialAttack, move.stat, (newMultiplier) => {
+                  target.dispatchStatsMultiplier(setSpecialAttack(newMultiplier < -6 ? -6 : newMultiplier));
+               });
+
+               break;
+            case "special-defense":
+               debuffStat(target.statsMultiplier.specialDefense, move.stat, (newMultiplier) => {
+                  target.dispatchStatsMultiplier(setSpecialDefense(newMultiplier < -6 ? -6 : newMultiplier));
+               });
+               break;
+
+            case "speed":
+               debuffStat(target.statsMultiplier.speed, move.stat, (newMultiplier) => {
+                  target.dispatchStatsMultiplier(setSpeed(newMultiplier < -6 ? -6 : newMultiplier));
+               });
+               break;
+         }
+      }
+
       switch (move.category) {
          case "heal":
             executeHealMove();
@@ -366,6 +416,10 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
          case "buff":
             executeBuffMove();
             break;
+
+         case "debuff":
+            executeDebuffMove()
+            break;   
 
          default:
             const effectiveness = getMultiplier(move.type, target.pokemon.types as iType[]);
