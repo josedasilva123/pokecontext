@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useContext } from "use-context-selector";
-import BattleChat from "./components/PokemonBattle/BattleChat";
-import PokemonMoves from "./components/PokemonBattle/PokemonMoves";
+import PokemonBattle from "./components/PokemonBattle";
 import PokemonTeam from "./components/PokemonTeam";
 import { PokeBattleContext } from "./contexts/PokeBattleContext";
 import { PokeListContext } from "./contexts/PokeListContext";
@@ -11,7 +10,7 @@ function App() {
    const [loading, setLoading] = useState(false);
    const { pokeList, currentPokemon, getCurrentPokemon } = useContext(PokeListContext);
    const { addPokemonToPokeTeam } = useContext(PokeTeamContext);
-   const { player, playerHP, enemy, enemyHP, battle, setBattle, battleChat } = useContext(PokeBattleContext);
+   const { battle, setBattle } = useContext(PokeBattleContext);
 
    return (
       <div className="App">
@@ -21,17 +20,7 @@ function App() {
          ) : (
             <>
                {battle && (
-                  <div>
-                     <div>
-                        <h1>{player.pokemon.name}</h1>
-                        <span>{playerHP}</span>
-                     </div>
-                     <div>
-                        <h1>{enemy.pokemon.name}</h1>
-                        <span>{enemyHP}</span>
-                     </div>
-                     {battleChat.length > 0 ? <BattleChat /> : <PokemonMoves />}
-                  </div>
+                  <PokemonBattle />
                )}
                {currentPokemon && (
                   <div>
