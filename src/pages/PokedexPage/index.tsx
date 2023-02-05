@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useContext } from "use-context-selector";
 import { PokeListContext } from "../../contexts/PokeListContext";
+import { StyledText } from "../../styles/typography";
 
 const PokedexPage = () => {
    const { pokeList } = useContext(PokeListContext);
@@ -11,7 +12,9 @@ const PokedexPage = () => {
             {pokeList.map((pokemon) => (
                <li key={pokemon.name}>
                   <Link to={`/pokemon/${pokemon.name}`}>
-                     <h3>{pokemon.name}</h3>
+                     <StyledText tag="span" fontWeight="bold" font={"secondary"} textTrasform={"capitalize"}>
+                        {pokemon.name}
+                     </StyledText>
                   </Link>
                </li>
             ))}
