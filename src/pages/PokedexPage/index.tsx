@@ -12,7 +12,7 @@ const PokedexPage = () => {
             {pokeList.map((pokemon) => (
                <li key={pokemon.name}>
                   <Link to={`/pokemon/${pokemon.name}`}>
-                     <StyledText tag="span" fontWeight="bold" font={"secondary"} textTrasform={"capitalize"}>
+                     <StyledText tag="span" fontWeight="bold" font={"secondary"} textTrasform={"capitalize"} size={"four"}>
                         {pokemon.name}
                      </StyledText>
                   </Link>
