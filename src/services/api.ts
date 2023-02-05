@@ -12,6 +12,7 @@ interface iRequest<Data>{
     url: string;
     data?: Data;
     headers?: any;
+    params?: any;
 }
 
 export const request = async (req: iRequest<any>) => {

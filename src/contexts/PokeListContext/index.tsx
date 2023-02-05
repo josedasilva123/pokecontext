@@ -21,8 +21,13 @@ export const PokeListProvider = ({children}: iContextDefaultProps) => {
                 setPokeListLoading(true);
                 const response = await request({
                     method: "get",
-                    url: `pokemon?limit=$151&offset=0`,
+                    url: `pokemon`,
+                    params: {
+                        limit: 151,
+                        offset: 0,
+                    }
                 })   
+                console.log(response.data);
 
                 setPokeList(response.data.results);
             } catch (error) {
