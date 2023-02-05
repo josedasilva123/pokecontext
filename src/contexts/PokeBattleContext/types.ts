@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { iBattlingPokemon, iPokemonBattle, iPokemonBattleAction, iStatsMultiplier } from "./reducers/types";
+import { iBattlingPokemon, iPokemonBattle, iPokemonBattleAction, iStatsMultiplier, iStatusMultiplierAction } from "./reducers/types";
 
 export interface iBattleMessage {
    text: string;
@@ -31,6 +31,7 @@ export interface iPokemonMove {
    pp: number;
    chance?: string;
    effect?: string;
+   stat?: "attack" | "defense" | "special-attack" | "special-defense" | "speed";
 }
 
 export interface iDoPokemonMoveParams {
@@ -46,6 +47,7 @@ export interface iBattlingPokemonInfoAndControls {
    hp: number | null;
    setHP: Dispatch<SetStateAction<number | null>>;
    statsMultiplier: iStatsMultiplier,
+   dispatchStatsMultiplier: React.Dispatch<iStatusMultiplierAction>,
    dispatch: Dispatch<iPokemonBattleAction>;
    type: "player" | "enemy";
 }

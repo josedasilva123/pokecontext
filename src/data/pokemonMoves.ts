@@ -3038,7 +3038,7 @@ export const allMoves = [
     name: "growth",
     type: TYPE_NORMAL,
     power: 1,
-    stat: "special",
+    stat: "special-attack",
     category: CATEGORY_BUFF,
     pp: 20,
   },

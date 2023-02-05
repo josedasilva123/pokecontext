@@ -21,7 +21,7 @@ export interface iPokemonBattleAction {
 
 export interface iStatusMultiplierAction {
   type: statsMultiplierActions,
-  payload: number,
+  payload: any,
 }
 
 export interface iStatsMultiplier {

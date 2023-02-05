@@ -47,6 +47,8 @@ export const PokemonBattleReducer: Reducer<iPokemonBattle, iPokemonBattleAction>
 
 export const PokemonStatsMultiplier: Reducer<iStatsMultiplier, iStatusMultiplierAction> = (state, action) => {
    switch (action.type) {
+      case statsMultiplierActions.setStatsMultiplier:
+         return action.payload;
       case statsMultiplierActions.setAttack:
          return { ...state, attack: action.payload };
       case statsMultiplierActions.setDefense:

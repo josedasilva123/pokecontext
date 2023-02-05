@@ -12,7 +12,17 @@ import {
    statsMultiplierInitialState,
    PokemonStatsMultiplier,
 } from "./reducers";
-import { setInDamage, setPokemon, setState } from "./reducers/actions";
+import {
+   setAttack,
+   setDefense,
+   setInDamage,
+   setPokemon,
+   setSpecialAttack,
+   setSpecialDefense,
+   setSpeed,
+   setState,
+   setStatsMultiplier,
+} from "./reducers/actions";
 import { iPokemonBattle } from "./reducers/types";
 import { iPokeBattleContext, iBattleMessage, iPokemonMove, iDoPokemonMoveParams, iBattlingPokemonInfoAndControls, iNext } from "./types";
 import { calculateDamage } from "./utils/battleRules/calculateDamage";
@@ -107,7 +117,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
    }, [playerHP, enemyHP]);
 
    useEffect(() => {
-      if (next && playerHP as number > 0 && enemyHP as number > 0) {
+      if (next && (playerHP as number) > 0 && (enemyHP as number) > 0) {
          doNextPokemonMove(next.move, next.userType);
       }
    }, [next]);
@@ -117,7 +127,9 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
       setPlayerHP(null);
       setEnemyHP(null);
       dispatchPlayer(setState(playerInitialState));
+      dispatchPlayerStatsMultiplier(setStatsMultiplier(statsMultiplierInitialState));
       dispatchEnemy(setState(enemyInitialState));
+      dispatchEnemyStatsMultiplier(setStatsMultiplier(statsMultiplierInitialState));
    }, []);
 
    const battleRun = useCallback(() => {
@@ -142,6 +154,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
                hp: playerHP,
                setHP: setPlayerHP,
                statsMultiplier: playerStatsMultiplier,
+               dispatchStatsMultiplier: dispatchPlayerStatsMultiplier,
                dispatch: dispatchPlayer,
                type: "player",
             };
@@ -151,6 +164,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
                hp: enemyHP,
                setHP: setEnemyHP,
                statsMultiplier: enemyStatsMultiplier,
+               dispatchStatsMultiplier: dispatchEnemyStatsMultiplier,
                dispatch: dispatchEnemy,
                type: "enemy",
             };
@@ -162,6 +176,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
                hp: enemyHP,
                setHP: setEnemyHP,
                statsMultiplier: enemyStatsMultiplier,
+               dispatchStatsMultiplier: dispatchEnemyStatsMultiplier,
                dispatch: dispatchEnemy,
                type: "enemy",
             };
@@ -171,6 +186,7 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
                hp: playerHP,
                setHP: setPlayerHP,
                statsMultiplier: playerStatsMultiplier,
+               dispatchStatsMultiplier: dispatchPlayerStatsMultiplier,
                dispatch: dispatchPlayer,
                type: "player",
             };
@@ -292,9 +308,63 @@ export const PokeBattleProvider = ({ children }: iContextDefaultProps) => {
          });
       }
 
+      function executeBuffMove() {
+         function buffStat(multiplierValue: number, statName: string, callback: (newMultiplier: number) => void) {
+            const newMultiplier = multiplierValue + move.power;
+            if (newMultiplier <= 6 && multiplierValue !== 6) {
+               addToNewBattleChat(getMoveText(user.pokemon, move), () => {
+                  callback(newMultiplier);
+               });
+               addToNewBattleChat(`${statName.toUpperCase()} ${move.power === 2 ? "aumentou drasticamente!" : "aumentou."}`, () => {
+                  executeNextMove();
+               });
+            } else {
+               addToNewBattleChat(`${statName.toUpperCase()} já está no máximo.`, () => {
+                  executeNextMove();
+               });
+            }
+         }
+
+         switch (move.stat) {
+            case "attack":
+               buffStat(user.statsMultiplier.attack, move.stat, (newMultiplier) => {
+                  user.dispatchStatsMultiplier(setAttack(newMultiplier > 6 ? 6 : newMultiplier));
+               });
+               break;
+
+            case "defense":
+               buffStat(user.statsMultiplier.defense, move.stat, (newMultiplier) => {
+                  user.dispatchStatsMultiplier(setDefense(newMultiplier > 6 ? 6 : newMultiplier));
+               });
+               break;
+
+            case "special-attack":
+               buffStat(user.statsMultiplier.specialAttack, move.stat, (newMultiplier) => {
+                  user.dispatchStatsMultiplier(setSpecialAttack(newMultiplier > 6 ? 6 : newMultiplier));
+               });
+
+               break;
+            case "special-defense":
+               buffStat(user.statsMultiplier.specialDefense, move.stat, (newMultiplier) => {
+                  user.dispatchStatsMultiplier(setSpecialDefense(newMultiplier > 6 ? 6 : newMultiplier));
+               });
+               break;
+
+            case "speed":
+               buffStat(user.statsMultiplier.speed, move.stat, (newMultiplier) => {
+                  user.dispatchStatsMultiplier(setSpeed(newMultiplier > 6 ? 6 : newMultiplier));
+               });
+               break;
+         }
+      }
+
       switch (move.category) {
          case "heal":
             executeHealMove();
+            break;
+
+         case "buff":
+            executeBuffMove();
             break;
 
          default:
