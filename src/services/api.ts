@@ -1,5 +1,7 @@
 import axios from "axios";
 
+export const galleryBaseURL = "https://img.pokemondb.net/artwork/"
+
 export const api = axios.create({
     baseURL: "https://pokeapi.co/api/v2/",
     timeout: 6000,
