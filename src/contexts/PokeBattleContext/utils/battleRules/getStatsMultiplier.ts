@@ -27,6 +27,5 @@ export function getStatsMultiplier(statsIndex: number, statsMultiplier: iStatsMu
         return stats.value * statsDebuff;
     } else {
         return stats.value;
-    }
-    
+    }    
  }
